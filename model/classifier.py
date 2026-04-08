@@ -151,48 +151,66 @@ class BirdClassifier:
     def create_visualizations(self, y: np.ndarray, sr: int, species: str = None) -> str:
         """
         Generate audio analysis visualizations as a base64-encoded PNG.
-        
-        Creates a 4-panel figure:
-        1. Waveform — amplitude over time
-        2. Spectrogram — frequency content over time (log scale)
-        3. Mel Spectrogram — perceptual frequency representation
-        4. Chromagram — pitch class energy distribution
+        Uses Object-Oriented Matplotlib for better thread safety and reliability.
         """
-        plt.style.use('dark_background')
-        fig, axs = plt.subplots(4, 1, figsize=(12, 14), facecolor='#121212')
+        try:
+            from matplotlib.figure import Figure
+            from matplotlib.backends.backend_agg import FigureCanvasAgg
+            
+            # Create figure object directly to avoid global plt state issues
+            fig = Figure(figsize=(12, 14), facecolor='#121212')
+            canvas = FigureCanvasAgg(fig)
+            axs = fig.subplots(4, 1)
 
-        time = np.linspace(0, len(y) / sr, len(y))
-        axs[0].plot(time, y, color='cyan', linewidth=0.5)
-        axs[0].set_title('Waveform', color='white', fontsize=13)
-        axs[0].set_xlabel('Time (s)', color='gray')
-        axs[0].set_ylabel('Amplitude', color='gray')
+            # Waveform
+            time = np.linspace(0, len(y) / sr, len(y))
+            axs[0].plot(time, y, color='cyan', linewidth=0.5)
+            axs[0].set_title('Waveform', color='white', fontsize=13)
+            axs[0].set_xlabel('Time (s)', color='gray')
+            axs[0].set_ylabel('Amplitude', color='gray')
+            axs[0].tick_params(colors='gray')
 
-        D = librosa.amplitude_to_db(np.abs(librosa.stft(y)), ref=np.max)
-        librosa.display.specshow(D, y_axis='log', x_axis='time', sr=sr, ax=axs[1], cmap='magma')
-        axs[1].set_title('Spectrogram (Log Scale)', color='white', fontsize=13)
+            # Log Spectrogram
+            D = librosa.amplitude_to_db(np.abs(librosa.stft(y)), ref=np.max)
+            img1 = librosa.display.specshow(D, y_axis='log', x_axis='time', sr=sr, ax=axs[1], cmap='magma')
+            axs[1].set_title('Spectrogram (Log Scale)', color='white', fontsize=13)
+            axs[1].tick_params(colors='gray')
 
-        mel = librosa.feature.melspectrogram(y=y, sr=sr)
-        librosa.display.specshow(
-            librosa.power_to_db(mel, ref=np.max),
-            y_axis='mel', x_axis='time', sr=sr, ax=axs[2], cmap='plasma'
-        )
-        axs[2].set_title('Mel Spectrogram', color='white', fontsize=13)
+            # Mel Spectrogram
+            mel = librosa.feature.melspectrogram(y=y, sr=sr)
+            img2 = librosa.display.specshow(
+                librosa.power_to_db(mel, ref=np.max),
+                y_axis='mel', x_axis='time', sr=sr, ax=axs[2], cmap='plasma'
+            )
+            axs[2].set_title('Mel Spectrogram', color='white', fontsize=13)
+            axs[2].tick_params(colors='gray')
 
-        chroma = librosa.feature.chroma_stft(y=y, sr=sr)
-        librosa.display.specshow(chroma, y_axis='chroma', x_axis='time', sr=sr, ax=axs[3], cmap='cool')
-        axs[3].set_title('Chromagram', color='white', fontsize=13)
+            # Chromagram
+            chroma = librosa.feature.chroma_stft(y=y, sr=sr)
+            img3 = librosa.display.specshow(chroma, y_axis='chroma', x_axis='time', sr=sr, ax=axs[3], cmap='cool')
+            axs[3].set_title('Chromagram', color='white', fontsize=13)
+            axs[3].tick_params(colors='gray')
 
-        if species:
-            fig.suptitle(f"Prediction: {species}", color='yellow', fontsize=16, fontweight='bold')
+            if species:
+                fig.suptitle(f"Species Spotlight: {species}", color='white', fontsize=16, fontweight='bold', y=0.98)
 
-        plt.tight_layout()
+            fig.tight_layout(pad=3.0)
 
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png', facecolor=fig.get_facecolor(), dpi=100)
-        buf.seek(0)
-        img_str = base64.b64encode(buf.read()).decode('utf-8')
-        plt.close(fig)
-        return img_str
+            # Render to buffer
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', facecolor=fig.get_facecolor(), dpi=100)
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode('utf-8')
+            
+            # Important: explicit cleanup
+            buf.close()
+            
+            return img_str
+        except Exception as e:
+            print(f"[BirdClassifier] Visualization error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return None
 
     def extract_features(self, audio_path: str) -> dict:
         """

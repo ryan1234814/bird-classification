@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Mic, Square, Upload, Sparkles, Loader2, Bird as BirdIcon, 
-  MapPin, Info, Image as ImageIcon, CheckCircle, Navigation, 
-  ChevronRight, Volume2, Globe, Trees, Compass
+import {
+  Mic, Square, Upload, Sparkles, Loader2, Bird as BirdIcon,
+  MapPin, Info, Image as ImageIcon, CheckCircle, Navigation,
+  ChevronRight, Volume2, Globe, Trees, Compass, Activity
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
@@ -170,7 +170,7 @@ function App() {
 
   return (
     <div className="min-h-screen text-slate-50">
-      <motion.header 
+      <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center py-12 md:py-20"
@@ -182,7 +182,7 @@ function App() {
           <h1>BirdScan AI</h1>
         </div>
         <p className="text-emerald-50/60 max-w-2xl mx-auto text-lg md:text-xl font-medium px-4">
-          Nature intelligence at your fingertips. Identify species by sound, 
+          Nature intelligence at your fingertips. Identify species by sound,
           explore global habitats, and discover conservation hotspots.
         </p>
       </motion.header>
@@ -232,7 +232,7 @@ function App() {
             </div>
 
             {isLoading && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="mt-8 p-6 bg-emerald-950/20 rounded-2xl border border-emerald-500/10 text-center"
@@ -244,7 +244,7 @@ function App() {
             )}
 
             {error && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="mt-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-200 text-sm text-center"
@@ -259,7 +259,7 @@ function App() {
         <div className="lg:col-span-8">
           <AnimatePresence mode="wait">
             {!results && !isLoading ? (
-              <motion.div 
+              <motion.div
                 key="empty"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -276,7 +276,7 @@ function App() {
                 </p>
               </motion.div>
             ) : results ? (
-              <motion.div 
+              <motion.div
                 key="results"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -293,7 +293,7 @@ function App() {
                   <div className="min-h-[400px]">
                     {/* TAB: DETECTIONS */}
                     {activeTab === 'detections' && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="space-y-2"
@@ -303,7 +303,7 @@ function App() {
                           <div>Scientific Lineage</div>
                           <div className="text-right">Match</div>
                         </div>
-                        
+
                         {results.detections.map((bird, idx) => (
                           <div
                             key={idx}
@@ -335,7 +335,7 @@ function App() {
 
                     {/* TAB: MAJOR PLACES (Enhanced Map) */}
                     {activeTab === 'map' && activeBird && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="space-y-6"
@@ -352,16 +352,16 @@ function App() {
                             style={{ height: '100%', width: '100%' }}
                             zoomControl={false}
                           >
-                            <ChangeView 
-                              center={[activeBird.description?.map_coordinates?.lat || 0, activeBird.description?.map_coordinates?.lng || 0]} 
-                              zoom={activeBird.description?.map_coordinates?.zoom || 3} 
+                            <ChangeView
+                              center={[activeBird.description?.map_coordinates?.lat || 0, activeBird.description?.map_coordinates?.lng || 0]}
+                              zoom={activeBird.description?.map_coordinates?.zoom || 3}
                             />
                             <TileLayer
                               attribution='&copy; OpenStreetMap'
                               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                               className="map-dark-tiles"
                             />
-                            
+
                             {/* Primary Habitat Marker */}
                             <Marker position={[activeBird.description?.map_coordinates?.lat || 0, activeBird.description?.map_coordinates?.lng || 0]}>
                               <Popup>
@@ -386,7 +386,7 @@ function App() {
                               </Marker>
                             ))}
                           </MapContainer>
-                          
+
                           {/* Map Legend/Overlay */}
                           <div className="absolute bottom-4 left-4 z-[1000] p-3 bg-slate-950/80 backdrop-blur-md rounded-xl border border-white/10 text-[10px] space-y-1">
                             <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#3d85c6]" /> Primary Distribution</div>
@@ -409,7 +409,7 @@ function App() {
 
                     {/* TAB: VISUALIZATIONS */}
                     {activeTab === 'visual' && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="space-y-6"

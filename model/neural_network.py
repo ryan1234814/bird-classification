@@ -1,22 +1,4 @@
-"""
-Neural Network Module for Bird Audio Classification
-=====================================================
-Implements a custom Convolutional Neural Network (CNN) using PyTorch for
-classifying bird species from audio spectrograms.
 
-Architecture:
-    - 3 Convolutional Blocks (Conv2D → BatchNorm → ReLU → MaxPool → Dropout)
-    - Adaptive Average Pooling (handles variable-length inputs)
-    - Fully Connected Classifier Head (FC → ReLU → Dropout → FC)
-
-The model takes a 3-channel spectrogram tensor as input:
-    Channel 0: Mel spectrogram (frequency content)
-    Channel 1: MFCCs (timbral features)
-    Channel 2: Chroma + Spectral Contrast (pitch & harmonic features)
-
-This module also provides an AudioClassificationPipeline class that integrates
-feature extraction, training, inference, and model persistence.
-"""
 
 import torch
 import torch.nn as nn
