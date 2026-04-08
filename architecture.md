@@ -71,15 +71,4 @@ The system utilizes an enhanced OpenStreetMap integration that goes beyond simpl
 │   ├── classifier.py       # Core Orchestrator
 │   ├── neural_network.py   # PyTorch CNN
 │   └── feature_extractor.py# Signal Processing
-├── architecture.md         # This Document
-└── docker-compose.yml      # Docker Orchestration
-
----
-
-## 6. Containerization (Docker)
-
-The application is fully containerized for consistent deployment:
-- **Backend Image**: Based on `python:3.11-slim`, with `ffmpeg` and `libsndfile` pre-installed.
-- **Frontend Image**: Based on `node:20-slim`, serving the Vite development environment.
-- **Orchestration**: Managed via `docker-compose.yml`, which handles volume mapping for hot-reloading and environment variable injection.
-```
+└── architecture.md         # This Document

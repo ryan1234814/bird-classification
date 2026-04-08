@@ -2,16 +2,6 @@
 
 A full-stack ML/DL web application that identifies bird species from audio recordings. It combines **BirdNet** (pre-trained deep learning) with a **custom PyTorch CNN** for audio classification, and uses **Groq LLM** (Llama 3.3 70B) for generating detailed species descriptions.
 
-## 🚀 Containerization
-
-If you have Docker installed, you can launch the entire stack with a single command:
-
-```bash
-docker-compose up --build
-```
-
-Access the UI at `http://localhost:5173` and the API at `http://localhost:8000`.
-
 ## 🧠 ML/DL Architecture
 
 ```
